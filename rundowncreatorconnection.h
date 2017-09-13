@@ -52,6 +52,8 @@ private:
     QHttpPart createFormPart(const QString &key, const QByteArray &value) const;
     QUrl requestUrl() const;
 
+    void sendFiles(const QByteArray &type, const QStringList &files);
+
     QNetworkAccessManager *m_netManager;
     QString m_apiUrl;
     QString m_apiKey;

@@ -60,35 +60,15 @@ void RundownCreatorConnection::registerDevice()
 
 void RundownCreatorConnection::setVideoFiles(const QStringList &files)
 {
-    if(!isValid() || m_deviceId == 0)
-    {
-        emit logMessage(tr("Device not registered."));
-        return;
-    }
-
-    QJsonObject object;
-    foreach (const QString &file, files)
-    {
-        object.insert(file, QJsonArray());
-    }
-
-    QJsonDocument doc;
-    doc.setObject(object);
-
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-    multiPart->append(createFormPart("Key", m_apiKey.toUtf8()));
-    multiPart->append(createFormPart("Action", "refreshFiles"));
-    multiPart->append(createFormPart("DeviceID", QByteArray::number(m_deviceId)));
-    multiPart->append(createFormPart("Type", "Video"));
-    multiPart->append(createFormPart("Files", doc.toJson(QJsonDocument::Compact)));
-
-    QNetworkRequest request(requestUrl());
-    QNetworkReply *reply = m_netManager->post(request, multiPart);
-    multiPart->setParent(reply);
-    reply->setObjectName("refreshFiles");
+    sendFiles("Video", files);
 }
 
 void RundownCreatorConnection::setImageFiles(const QStringList &files)
+{
+    sendFiles("Graphics", files);
+}
+
+void RundownCreatorConnection::sendFiles(const QByteArray &type, const QStringList &files)
 {
     if(!isValid() || m_deviceId == 0)
     {
@@ -109,7 +89,7 @@ void RundownCreatorConnection::setImageFiles(const QStringList &files)
     multiPart->append(createFormPart("Key", m_apiKey.toUtf8()));
     multiPart->append(createFormPart("Action", "refreshFiles"));
     multiPart->append(createFormPart("DeviceID", QByteArray::number(m_deviceId)));
-    multiPart->append(createFormPart("Type", "Graphics"));
+    multiPart->append(createFormPart("Type", type));
     multiPart->append(createFormPart("Files", doc.toJson(QJsonDocument::Compact)));
 
     QNetworkRequest request(requestUrl());
