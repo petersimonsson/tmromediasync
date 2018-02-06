@@ -45,6 +45,8 @@ private slots:
     void readFromSocket();
 
 private:
+    QStringList splitLine(const QString &line) const;
+
     QTcpSocket *m_socket;
 
     quint16 m_currentCode;

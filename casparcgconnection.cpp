@@ -20,6 +20,8 @@
 #include <QTcpSocket>
 #include <QDebug>
 #include <QStringList>
+#include <QRegularExpression>
+#include <QRegularExpressionMatchIterator>
 
 CasparCGConnection::CasparCGConnection(QObject *parent) :
     QObject(parent), m_socket(nullptr), m_currentCode(0)
@@ -53,21 +55,13 @@ void CasparCGConnection::getContentList()
 
 void CasparCGConnection::readFromSocket()
 {
-    QRegExp splitRegExp("(\"[^\"]*\"|\\S*)\\s*");
     while(m_socket->canReadLine())
     {
         QByteArray data = m_socket->readLine();
         data.chop(2); // Remove \r\n
         QString line = QString::fromUtf8(data);
-        QStringList parameters;
-        int pos = 0;
 
-        while((pos = splitRegExp.indexIn(line, pos)) != -1)
-        {
-            parameters.append(splitRegExp.cap(1).remove('\"'));
-
-            pos += splitRegExp.matchedLength();
-        }
+        QStringList parameters = splitLine(line);
 
         switch(m_currentCode)
         {
@@ -102,6 +96,30 @@ void CasparCGConnection::readFromSocket()
             break;
         }
     }
+}
+
+QStringList CasparCGConnection::splitLine(const QString &line) const
+{
+    QRegularExpression splitRegExp("(\"[^\"]*\"|\\S*)\\s*");
+    QStringList parameters;
+
+    if(!line.isEmpty())
+    {
+        QRegularExpressionMatchIterator it = splitRegExp.globalMatch(line);
+
+        while(it.hasNext())
+        {
+            QRegularExpressionMatch match = it.next();
+
+            if(match.lastCapturedIndex() > 0)
+            {
+                QString paramString = match.captured(1);
+                parameters.append(paramString.remove('\"'));
+            }
+        }
+    }
+
+    return parameters;
 }
 
 void CasparCGConnection::parseAction(const QString &action, const QStringList &parameters)
