@@ -44,6 +44,8 @@ private slots:
     void handleConnected();
     void readFromSocket();
 
+    void handleSocketError();
+
 private:
     QStringList splitLine(const QString &line) const;
 

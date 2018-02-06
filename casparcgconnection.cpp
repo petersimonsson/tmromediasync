@@ -30,6 +30,7 @@ CasparCGConnection::CasparCGConnection(QObject *parent) :
 
     connect(m_socket, &QTcpSocket::connected, this, &CasparCGConnection::handleConnected);
     connect(m_socket, &QTcpSocket::readyRead, this, &CasparCGConnection::readFromSocket);
+    connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
 }
 
 void CasparCGConnection::connectToHost(const QString &address, quint16 port)
@@ -151,4 +152,9 @@ void CasparCGConnection::parseData(const QString &action, const QStringList &par
         else if(parameters[1] == "STILL")
             m_stillList.append(filename);
     }
+}
+
+void CasparCGConnection::handleSocketError()
+{
+    emit logMessage(tr("CasparCG socket error: %1").arg(m_socket->errorString()));
 }
