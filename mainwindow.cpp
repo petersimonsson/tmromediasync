@@ -77,6 +77,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::startUpdateTimer()
 {
+    m_caspar->getContentList();
     m_updateTimer->start();
 }
 
