@@ -33,6 +33,8 @@ public:
     QStringList movieList() const { return m_movieList; }
     QStringList stillList() const { return m_stillList; }
 
+    bool isConnected() const;
+
 public slots:
     void getContentList();
 
@@ -50,6 +52,8 @@ private:
     QStringList splitLine(const QString &line) const;
 
     QTcpSocket *m_socket;
+    QString m_address;
+    quint16 m_port;
 
     quint16 m_currentCode;
     QString m_currentAction;

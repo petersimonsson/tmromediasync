@@ -38,6 +38,8 @@ void CasparCGConnection::connectToHost(const QString &address, quint16 port)
     if(m_socket->isOpen())
         m_socket->close();
 
+    m_address = address;
+    m_port = port;
     m_socket->connectToHost(address, port);
 }
 
@@ -49,9 +51,27 @@ void CasparCGConnection::handleConnected()
     emit logMessage(tr("Connected to CasparCG."));
 }
 
+bool CasparCGConnection::isConnected() const
+{
+    return m_socket->isOpen();
+}
+
 void CasparCGConnection::getContentList()
 {
-    m_socket->write("CLS\r\n");
+    if (!isConnected())
+    {
+        emit logMessage(tr("Not connected to CasparCG."));
+
+        if (!m_address.isEmpty())
+        {
+            emit logMessage(tr("Trying to reconnect to CasparCG."));
+            connectToHost(m_address, m_port);
+        }
+    }
+    else
+    {
+        m_socket->write("CLS\r\n");
+    }
 }
 
 void CasparCGConnection::readFromSocket()
@@ -157,4 +177,5 @@ void CasparCGConnection::parseData(const QString &action, const QStringList &par
 void CasparCGConnection::handleSocketError()
 {
     emit logMessage(tr("CasparCG socket error: %1").arg(m_socket->errorString()));
+    m_socket->close();
 }
