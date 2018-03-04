@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     a.setApplicationName("TMROMediaSync");
-    a.setApplicationVersion("0.1");
+    a.setApplicationVersion("0.2");
     a.setOrganizationDomain("tmro.tv");
     a.setOrganizationName("TMRO");
 
