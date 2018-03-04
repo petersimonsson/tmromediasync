@@ -1,6 +1,6 @@
 /**************************************************************************
   TMROMediaSync
-  Copyright (C) 2017  Peter Simonsson <peter.simonsson@gmail.com>
+  Copyright (C) 2018  Peter Simonsson <peter.simonsson@gmail.com>
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,44 +15,44 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef ATTRIBUTESDIALOG_H
+#define ATTRIBUTESDIALOG_H
 
-#include <QMainWindow>
+#include "attribute.h"
+
+#include <QDialog>
 
 namespace Ui {
-class MainWindow;
+class AttributesDialog;
 }
 
-class CasparCGConnection;
-class RundownCreatorConnection;
+class AttributesModel;
 
-class QTimer;
-
-class MainWindow : public QMainWindow
+class AttributesDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit AttributesDialog(QWidget *parent = 0);
+    ~AttributesDialog();
 
-    void addLogMessage(const QString &message);
+    void setImageAttributes(const QList<Attribute> &list);
+    QList<Attribute> imageAttributes() const;
+    void setVideoAttributes(const QList<Attribute> &list);
+    QList<Attribute> videoAttributes() const;
 
 private slots:
-    void startUpdateTimer();
-    void showContentsList();
+    void addVideoAttribute();
+    void removeVideoAttribute();
 
-    void showSettingsDialog();
-    void showAttributesDialog();
+    void addImageAttribute();
+    void removeImageAttribute();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::AttributesDialog *ui;
 
-    CasparCGConnection *m_caspar;
-    RundownCreatorConnection *m_rundownCreator;
-
-    QTimer *m_updateTimer;
+    AttributesModel *m_imageAttributesModel;
+    AttributesModel *m_videoAttributesModel;
 };
 
-#endif // MAINWINDOW_H
+#endif // ATTRIBUTESDIALOG_H

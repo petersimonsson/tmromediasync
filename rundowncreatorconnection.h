@@ -24,11 +24,14 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 
+class AttributesStore;
+
 class RundownCreatorConnection : public QObject
 {
     Q_OBJECT
 public:
     explicit RundownCreatorConnection(QObject *parent = nullptr);
+    ~RundownCreatorConnection();
 
     bool isValid() const { return !m_apiUrl.isEmpty() && !m_apiKey.isEmpty() && !m_deviceName.isEmpty(); }
 
@@ -45,6 +48,8 @@ public:
     void setVideoFiles(const QStringList &files);
     void setImageFiles(const QStringList &files);
 
+    AttributesStore *attributes() const { return m_attributes; }
+
 private slots:
     void handleFinished(QNetworkReply *reply);
 
@@ -53,6 +58,7 @@ private:
     QUrl requestUrl() const;
 
     void sendFiles(const QByteArray &type, const QStringList &files);
+    QJsonDocument createFilesJson(const QByteArray &type, const QStringList &files);
 
     QNetworkAccessManager *m_netManager;
     QString m_apiUrl;
@@ -60,6 +66,8 @@ private:
 
     QString m_deviceName;
     quint16 m_deviceId;
+
+    AttributesStore *m_attributes;
 
 signals:
     void logMessage(const QString &message);

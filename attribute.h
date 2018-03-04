@@ -1,6 +1,6 @@
 /**************************************************************************
   TMROMediaSync
-  Copyright (C) 2017  Peter Simonsson <peter.simonsson@gmail.com>
+  Copyright (C) 2018  Peter Simonsson <peter.simonsson@gmail.com>
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,44 +15,16 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef ATTRIBUTE_H
+#define ATTRIBUTE_H
 
-#include <QMainWindow>
+#include <QString>
 
-namespace Ui {
-class MainWindow;
-}
-
-class CasparCGConnection;
-class RundownCreatorConnection;
-
-class QTimer;
-
-class MainWindow : public QMainWindow
+struct Attribute
 {
-    Q_OBJECT
-
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-
-    void addLogMessage(const QString &message);
-
-private slots:
-    void startUpdateTimer();
-    void showContentsList();
-
-    void showSettingsDialog();
-    void showAttributesDialog();
-
-private:
-    Ui::MainWindow *ui;
-
-    CasparCGConnection *m_caspar;
-    RundownCreatorConnection *m_rundownCreator;
-
-    QTimer *m_updateTimer;
+    QString tag;
+    QString value;
+    QString regexp;
 };
 
-#endif // MAINWINDOW_H
+#endif // ATTRIBUTE_H

@@ -20,6 +20,8 @@
 #include "casparcgconnection.h"
 #include "rundowncreatorconnection.h"
 #include "settingsdialog.h"
+#include "attributesdialog.h"
+#include "attributesstore.h"
 
 #include <QDebug>
 #include <QSettings>
@@ -37,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
             qApp, &QApplication::quit);
     connect(ui->actionSettings, &QAction::triggered,
             this, &MainWindow::showSettingsDialog);
+    connect(ui->actionConfigureAttributes, &QAction::triggered,
+            this, &MainWindow::showAttributesDialog);
 
     QSettings settings;
 
@@ -139,4 +143,18 @@ void MainWindow::addLogMessage(const QString &message)
     QTextCursor cursor = ui->logBrowser->textCursor();
     cursor.movePosition(QTextCursor::End);
     cursor.insertText(message + "\n");
+}
+
+void MainWindow::showAttributesDialog()
+{
+    QScopedPointer<AttributesDialog> dialog(new AttributesDialog(this));
+
+    dialog->setImageAttributes(m_rundownCreator->attributes()->imageAttributes());
+    dialog->setVideoAttributes(m_rundownCreator->attributes()->videoAttributes());
+
+    if(dialog->exec() == QDialog::Accepted)
+    {
+        m_rundownCreator->attributes()->setImageAttributes(dialog->imageAttributes());
+        m_rundownCreator->attributes()->setVideoAttributes(dialog->videoAttributes());
+    }
 }

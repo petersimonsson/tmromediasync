@@ -16,6 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 #include "rundowncreatorconnection.h"
+#include "attributesstore.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -24,13 +25,20 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QRegularExpression>
 
 RundownCreatorConnection::RundownCreatorConnection(QObject *parent) :
-    QObject(parent), m_deviceId(0)
+    QObject(parent), m_deviceId(0), m_attributes(new AttributesStore(this))
 {
     m_netManager = new QNetworkAccessManager(this);
 
     connect(m_netManager, &QNetworkAccessManager::finished, this, &RundownCreatorConnection::handleFinished);
+
+    connect(m_attributes, &AttributesStore::logMessage, this, &RundownCreatorConnection::logMessage);
+}
+
+RundownCreatorConnection::~RundownCreatorConnection()
+{
 }
 
 void RundownCreatorConnection::registerDevice()
@@ -76,14 +84,7 @@ void RundownCreatorConnection::sendFiles(const QByteArray &type, const QStringLi
         return;
     }
 
-    QJsonObject object;
-    foreach (const QString &file, files)
-    {
-        object.insert(file, QJsonArray());
-    }
-
-    QJsonDocument doc;
-    doc.setObject(object);
+    QJsonDocument doc = createFilesJson(type, files);
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
     multiPart->append(createFormPart("Key", m_apiKey.toUtf8()));
@@ -96,6 +97,28 @@ void RundownCreatorConnection::sendFiles(const QByteArray &type, const QStringLi
     QNetworkReply *reply = m_netManager->post(request, multiPart);
     multiPart->setParent(reply);
     reply->setObjectName("refreshFiles");
+}
+
+QJsonDocument RundownCreatorConnection::createFilesJson(const QByteArray &type, const QStringList &files)
+{
+    QJsonDocument doc;
+    QJsonObject object;
+    AttributesStore::Type attrType = AttributesStore::NoType;
+
+    if(type == "Video")
+        attrType = AttributesStore::VideoType;
+    else
+        attrType = AttributesStore::ImageType;
+
+    foreach (const QString &file, files)
+    {
+        QJsonArray array = m_attributes->fileAttributes(attrType, file);
+        object.insert(file, array);
+    }
+
+    doc.setObject(object);
+
+    return doc;
 }
 
 void RundownCreatorConnection::handleFinished(QNetworkReply *reply)

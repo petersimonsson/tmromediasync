@@ -28,14 +28,22 @@ SOURCES += \
         mainwindow.cpp \
     casparcgconnection.cpp \
     rundowncreatorconnection.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    attributesdialog.cpp \
+    attributesmodel.cpp \
+    attributesstore.cpp
 
 HEADERS += \
         mainwindow.h \
     casparcgconnection.h \
     rundowncreatorconnection.h \
-    settingsdialog.h
+    settingsdialog.h \
+    attributesdialog.h \
+    attributesmodel.h \
+    attributesstore.h \
+    attribute.h
 
 FORMS += \
         mainwindow.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    attributesdialog.ui
