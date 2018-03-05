@@ -79,6 +79,7 @@ QVariant AttributesModel::data(const QModelIndex &index, int role) const
 
     switch(role)
     {
+    case Qt::EditRole:
     case Qt::DisplayRole:
         switch(index.column())
         {
