@@ -36,6 +36,9 @@
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0" colspan="3">
         <widget class="QTreeView" name="videoAttributesView">
+         <property name="editTriggers">
+          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+         </property>
          <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
@@ -86,6 +89,9 @@
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0" colspan="3">
         <widget class="QTreeView" name="imageAttributesView">
+         <property name="editTriggers">
+          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+         </property>
          <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
